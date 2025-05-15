@@ -21,9 +21,11 @@ class Anggota extends CI_Controller {
         // Validasi input
         $this->form_validation->set_rules('nama', 'Nama', 'required');
         $this->form_validation->set_rules('kk', 'KK/Kartu Pelajar', 'required');
+        $this->form_validation->set_rules('nis', 'nis/nomor induk siswa', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('nomor_hp', 'Nomor HP', 'required');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required|in_list[siswa,umum]');
 
         if ($this->form_validation->run() == FALSE) {
             // Jika validasi gagal, kembalikan ke form tambah anggota
@@ -33,15 +35,17 @@ class Anggota extends CI_Controller {
             $data = array(
                 'nama' => $this->input->post('nama'),
                 'kk' => $this->input->post('kk'),
+                'nis' => $this->input->post('nis'),
                 'email' => $this->input->post('email'),
                 'nomor_hp' => $this->input->post('nomor_hp'),
                 'alamat' => $this->input->post('alamat'),
+                'status' => $this->input->post('status', TRUE),
             );
 
             // Simpan ke database
             if ($this->DataModel->insert_anggota($data)) {
                 $this->session->set_flashdata('success', 'Anggota berhasil ditambahkan.');
-                redirect('anggota'); // Arahkan kembali ke daftar anggota setelah berhasil
+                redirect('pendaftaran'); // Arahkan kembali ke daftar anggota setelah berhasil
             } else {
                 $this->session->set_flashdata('error', 'Gagal menambahkan anggota.');
                 redirect('anggota/tambah'); // Kembali ke form tambah jika gagal
@@ -53,9 +57,11 @@ class Anggota extends CI_Controller {
         // Ambil data dari form
         $nama = $this->input->post('nama');
         $kk = $this->input->post('kk');
+        $nis = $this->input->post('nis');
         $email = $this->input->post('email');
         $nomor_hp = $this->input->post('nomor_hp');
         $alamat = $this->input->post('alamat');
+        $status = $this->input->post('status');
     
         // Cek apakah password diubah atau tidak
         if (!empty($password)) {
@@ -63,18 +69,22 @@ class Anggota extends CI_Controller {
             $data = array(
                 'nama' => $nama,
                 'kk' => $kk,
+                'nis' => $nis,
                 'email' => $email,
                 'nomor_hp' => $nomor_hp,
-                'alamat' => $alamat
+                'alamat' => $alamat,
+                'status' => $status
             );
         } else {
             // Update tanpa mengubah password
             $data = array(
                 'nama' => $nama,
                 'kk' => $kk,
+                'nis' => $nis,
                 'email' => $email,
                 'nomor_hp' => $nomor_hp,
-                'alamat' => $alamat
+                'alamat' => $alamat,
+                'status' => $status
             );
         }
     

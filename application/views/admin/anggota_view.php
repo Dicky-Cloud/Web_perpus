@@ -137,16 +137,15 @@
                             <?= $this->session->flashdata('error'); ?>
                         </div>
                     <?php endif; ?>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                Tambah Data
-                </button>
+              
                     <table id="datatablesSimple" class="display">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>KK/Kartu Pelajar</th>
+                                <th>status</th>
+                                <th>NIK</th>
+                                <th>NIS</th>
                                 <th>Email</th>
                                 <th>Nomor Hp</th>
                                 <th>Alamat</th>
@@ -158,7 +157,9 @@
     <tr>
         <td><?= $index + 1; ?></td>
         <td><?= $anggota_item->nama; ?></td>
+        <td><?= $anggota_item->status; ?></td>
         <td><?= $anggota_item->kk; ?></td>
+        <td><?= $anggota_item->nis; ?></td>
         <td><?= $anggota_item->email; ?></td>
         <td><?= $anggota_item->nomor_hp; ?></td>
         <td><?= $anggota_item->alamat; ?></td>
@@ -175,45 +176,6 @@
         </div>
     </main>
 
-<!-- Modal Tambah Data -->
-<div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="tambahModalLabel">Tambah Data Anggota</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form action="<?= base_url('anggota/tambah'); ?>" method="post">
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="nama" class="form-label">Nama</label>
-            <input type="text" class="form-control" id="nama" name="nama" required>
-          </div>
-          <div class="mb-3">
-            <label for="kk" class="form-label">KK/Kartu Pelajar</label>
-            <input type="text" class="form-control" id="kk" name="kk" required>
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-          </div>
-          <div class="mb-3">
-            <label for="nomor_hp" class="form-label">Nomor HP</label>
-            <input type="text" class="form-control" id="nomor_hp" name="nomor_hp" required>
-          </div>
-          <div class="mb-3">
-            <label for="alamat" class="form-label">Alamat</label>
-            <textarea class="form-control" id="alamat" name="alamat" rows="3" required></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
     <!-- Modal Edit untuk Setiap Anggota -->
     <?php foreach ($anggota as $anggota_item): ?>
     <div class="modal fade" id="editModal<?= $anggota_item->id_anggota; ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $anggota_item->id_anggota; ?>" aria-hidden="true">
