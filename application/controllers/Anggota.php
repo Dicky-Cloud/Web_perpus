@@ -16,42 +16,48 @@ class Anggota extends CI_Controller {
         // Panggil fungsi check_login untuk memastikan pengguna sudah login
         check_login();
     }
+public function tambah() {
+    // Validasi input umum
+    $this->form_validation->set_rules('nama', 'Nama', 'required');
+    $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+    $this->form_validation->set_rules('nomor_hp', 'Nomor HP', 'required');
+    $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+    $this->form_validation->set_rules('status', 'Status', 'required|in_list[siswa,umum]');
 
-    public function tambah() {
-        // Validasi input
-        $this->form_validation->set_rules('nama', 'Nama', 'required');
-        $this->form_validation->set_rules('kk', 'KK/Kartu Pelajar', 'required');
-        $this->form_validation->set_rules('nis', 'nis/nomor induk siswa', 'required');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('nomor_hp', 'Nomor HP', 'required');
-        $this->form_validation->set_rules('alamat', 'Alamat', 'required');
-        $this->form_validation->set_rules('status', 'Status', 'required|in_list[siswa,umum]');
+    $status = $this->input->post('status');
 
-        if ($this->form_validation->run() == FALSE) {
-            // Jika validasi gagal, kembalikan ke form tambah anggota
-            $this->load->view('admin/anggota_view'); // File view untuk tambah anggota
+    // Validasi khusus berdasarkan status
+    if ($status === 'siswa') {
+        $this->form_validation->set_rules('nis', 'Nomor Induk Siswa (NIS)', 'required');
+    } elseif ($status === 'umum') {
+        $this->form_validation->set_rules('kk', 'Nomor Induk Kependudukan (NIK)', 'required');
+    }
+
+    if ($this->form_validation->run() == FALSE) {
+        // Jika validasi gagal, kembalikan ke form tambah anggota
+        $this->load->view('admin/anggota_view');
+    } else {
+        // Siapkan data berdasarkan status
+        $data = array(
+            'nama' => $this->input->post('nama'),
+            'email' => $this->input->post('email'),
+            'nomor_hp' => $this->input->post('nomor_hp'),
+            'alamat' => $this->input->post('alamat'),
+            'status' => $status,
+            'nis' => ($status === 'siswa') ? $this->input->post('nis') : null,
+            'kk'  => ($status === 'umum') ? $this->input->post('kk') : null,
+        );
+
+        // Simpan ke database
+        if ($this->DataModel->insert_anggota($data)) {
+            $this->session->set_flashdata('success', 'Anggota berhasil ditambahkan.');
+            redirect('pendaftaran');
         } else {
-            // Siapkan data untuk disimpan
-            $data = array(
-                'nama' => $this->input->post('nama'),
-                'kk' => $this->input->post('kk'),
-                'nis' => $this->input->post('nis'),
-                'email' => $this->input->post('email'),
-                'nomor_hp' => $this->input->post('nomor_hp'),
-                'alamat' => $this->input->post('alamat'),
-                'status' => $this->input->post('status', TRUE),
-            );
-
-            // Simpan ke database
-            if ($this->DataModel->insert_anggota($data)) {
-                $this->session->set_flashdata('success', 'Anggota berhasil ditambahkan.');
-                redirect('pendaftaran'); // Arahkan kembali ke daftar anggota setelah berhasil
-            } else {
-                $this->session->set_flashdata('error', 'Gagal menambahkan anggota.');
-                redirect('anggota/tambah'); // Kembali ke form tambah jika gagal
-            }
+            $this->session->set_flashdata('error', 'Gagal menambahkan anggota.');
+            redirect('anggota/tambah');
         }
     }
+}
 
     public function update($id_anggota) {
         // Ambil data dari form
